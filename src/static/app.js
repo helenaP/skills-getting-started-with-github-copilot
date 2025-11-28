@@ -15,19 +15,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
-
-        const spotsLeft = details.max_participants - details.participants.length;
-
+        // Create activity card with a participants section placeholder
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="participants-section">
+            <h5>Participants</h5>
+            <div class="participants-list"></div>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
+
+        // Populate participants list (safe DOM creation)
+        const participantsContainer = activityCard.querySelector(".participants-list");
+        const participants = details.participants || [];
+
+        if (participants.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "participants-empty";
+          empty.textContent = "No participants yet.";
+          participantsContainer.appendChild(empty);
+        } else {
+          const ul = document.createElement("ul");
+          participants.forEach((p) => {
+            const li = document.createElement("li");
+            li.textContent = p;
+            ul.appendChild(li);
+          });
+          participantsContainer.appendChild(ul);
+        }
 
         // Add option to select dropdown
         const option = document.createElement("option");
